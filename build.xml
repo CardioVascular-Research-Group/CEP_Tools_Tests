@@ -1,0 +1,57 @@
+<project name="CEP_Tools_Tests" basedir="." default="jar">
+	
+	<property name="liferay" value="/opt/liferay" />
+	<property name="dependencies" value="${liferay}/projects-dependencies" />
+	<property name="selenium-jars" value="${dependencies}/CVRG_Tests-dependencies" />
+	<property name="destination" value="/opt/liferay/testing" />
+	
+	<path id="project-classpath">
+		<fileset dir="${selenium-jars}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<pathconvert property="manifest.classpath" pathsep=" ">
+	  <path refid="project-classpath"/>
+	  <mapper>
+	    <chainedmapper>
+	       <flattenmapper/>
+	       <globmapper from="*.jar" to="${selenium-jars}/*.jar"/>
+	    </chainedmapper>
+	  </mapper>
+	</pathconvert>
+	
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="compile" depends="clean">
+    	   	
+    	<mkdir dir="build"/>
+        <mkdir dir="build/classes"/>
+        <javac includeantruntime="false" classpathref="project-classpath" srcdir="src" destdir="build/classes" target="1.5" debug="true">
+        	<compilerarg value="-Xlint:unchecked"/>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile">
+    	<jar destfile="${ant.project.name}.jar" basedir="build/classes" filesetmanifest="mergewithoutmain">
+    		<manifest>
+    			<attribute name="Main-Class" value="edu.jhu.cvrg.seleniummain.CEPTestController" />
+    			<attribute name="Class-Path" value="${manifest.classpath}"/>
+    		</manifest>
+    	</jar>
+    	<antcall target="clean"/>
+    	
+    	<mkdir dir="${destination}" />
+    	<mkdir dir="${destination}/src/testconfig" />
+    	<delete file="${destination}/${ant.project.name}.jar"></delete>
+    	
+    	<copy todir="${destination}/src/testconfig" file="./src/testconfig/cep_properties.config" />
+		<copy todir="${destination}" file="./${ant.project.name}.jar" />
+
+    	<delete file="${ant.project.name}.jar"></delete>
+    	
+    </target>
+	
+</project>
