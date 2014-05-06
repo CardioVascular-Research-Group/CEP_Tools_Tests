@@ -16,7 +16,6 @@ public class CEPTestController extends TestController{
 	/**
 	 * @param args
 	 */
-	
 	public static void main(String[] args) {
 		
 		if(args.length != 5 || args[0].equals("--help")) {
