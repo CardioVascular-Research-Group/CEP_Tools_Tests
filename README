@@ -1,0 +1,64 @@
+Instructions:
+
+Currently, Firefox 28, Internet Explorer 9, and Chrome 34.0.1846.116 m have been tested.  Future versions of these tests will include Opera and Safari.
+
+If using Firefox or Safari, enter the appropriate text in the "browser" field of the global_properties.config file and proceed to the Running CVRG_Tests stage.
+
+If using a different browser, assuming that you have the browser installed, then follow these instructions first:
+
+-  Download the appropriate Selenium Driver for the browser if needed, unzip it to a location of your choice
+
+Internet Explorer:  http://selenium-release.storage.googleapis.com/index.html
+Chrome:  http://chromedriver.storage.googleapis.com/index.html
+
+The drivers for Opera and Safari come built-in and do not require additional downloads.
+
+-  In the global_properties.config file, enter the full path where the executable file was placed the "browserdriver" field (or the browser executable in the case of Opera)
+
+-  Change the "browser" field to the appropriate selection (the comments give the currently supported choices, which must be entered as stated)
+
+Note:  If using Opera, the Opera Driver only works with version 12.16 and below.  Later versions do not work as they use a different engine.
+
+Also note that Safari will only run on OSX.  Future implementations of Selenium may expand that to Windows.
+
+
+Running CVRG_Tests:
+
+This can either be compiled as an executable jar or run as a project within eclipse.
+
+First, acquire the Selenium libraries and their dependencies from the CVRG_Tests-dependencies folder in Dropbox.  Copy the CVRG_Tests-dependencies folder into the projects-dependencies folder in liferay
+
+Copy the config files located in that same directory into the src/testconfig folder in the project source code.  Be sure to fill in the login credentials
+for the login accounts in the global_properties.config file before building the jar.
+
+If running as a standalone executable:
+
+1)  Run the ant script to build the executable jar.  By default it will place the jar in /opt/liferay/testing
+
+2)  At the command line, type:
+
+java -jar WaveformTests.jar <LOGIN | WAVEFORM | CEP | ALL> <host> <username> <password> <desired_logfile_location>
+
+Note:  The ant script copies over a default config file into the /opt/liferay/testing folder that is ready to use.
+
+
+If running from within Eclipse:  
+
+1)  Add the Selenium libraries to the build path
+
+2)  Go to Run -> Run Configurations
+
+3)  Go to the Arguments tab
+
+4)  Under the "Program Arguments" field, enter the value for each command line argument in the order presented in Step 3 of 
+	running this project as a standalone jar.  Each argument must be on a separate line.
+	
+5)  Click Apply, and then click Run.
+
+After the initial configuration is set up, all that is required is to run the program through Eclipse.  This also allows for 
+running in debug mode as well.  To change the command line arguments simply return to the Run Configurations screen and follow the steps
+above.
+
+Note:  If the logfile location is in the same place as an existing logfile, it will attempt to append to that logfile rather than override and create a new one.
+
+In addition, on Windows, use a word processor or text editor other than Notepad for best results
