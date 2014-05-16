@@ -9,6 +9,7 @@ import edu.jhu.cvrg.seleniummain.LogfileManager;
 import edu.jhu.cvrg.ceptests.CEPTestProperties;
 import edu.jhu.cvrg.ceptests.search.CEPSearchTester;
 import edu.jhu.cvrg.ceptests.upload.CEPUploadTester;
+import edu.jhu.cvrg.ceptests.viewpub.CEPViewPubsTester;
 
 
 public class CEPTestController extends TestController{
@@ -78,6 +79,19 @@ public class CEPTestController extends TestController{
 			
 			String uploadpath = testProps.getUploadpath();
 			String searchpath = testProps.getSearchpath();
+			String editpath = testProps.getPublicationsPath();
+			
+			// TODO:  In the near future, refactor this portion.  Make this into a list of the base class type and iterate through them, since they all
+			//        run the same test methods
+			
+			CEPViewPubsTester viewPubs = new CEPViewPubsTester(hostname, editpath, initialWelcomePath, username, password, true, whichBrowser);
+			
+			viewPubs.login(false);
+			viewPubs.goToPage();
+
+			viewPubs.runAllTests();
+			viewPubs.logout();
+			viewPubs.close();
 			
 			CEPUploadTester upload = new CEPUploadTester(hostname, uploadpath, initialWelcomePath, username, password, true, whichBrowser);
 			

@@ -15,8 +15,9 @@ import edu.jhu.cvrg.seleniummain.BrowserEnum;
 import edu.jhu.cvrg.seleniummain.LogfileManager;
 import edu.jhu.cvrg.seleniummain.TestNameEnum;
 
-public final class CEPUploadTester extends GenericCEPTester {
-	private ArrayDeque<String> backButtonStack;
+public class CEPUploadTester extends GenericCEPTester {
+	protected ArrayDeque<String> backButtonStack;
+	protected boolean useBackButtons = true; // this determines whether to use a Back button or a Start Over button 
 
 	public CEPUploadTester(String site, String viewPath, String welcomePath,
 			String userName, String passWord, boolean loginRequired, BrowserEnum whichBrowser) {
@@ -151,7 +152,7 @@ public final class CEPUploadTester extends GenericCEPTester {
 			if(!(portletDriver.findElements(By.id(backButtonID)).isEmpty())) {
 				portletLogMessages.add("Clicking back button(s) to return to starting screen");
 				portletDriver.findElement(By.id(backButtonID)).click();
-				portletDriver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+				portletDriver.manage().timeouts().implicitlyWait(8, TimeUnit.SECONDS);
 			}
 			
 			i--;
@@ -161,10 +162,13 @@ public final class CEPUploadTester extends GenericCEPTester {
 		
 		// finally, see if we arrived back at the main page, stop testing if we did not
 		// If the first page can't be found, then later tests
+		portletDriver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 		if(portletDriver.findElements(By.id(firstStepInputBoxID)).isEmpty()) {
 			portletLogMessages.add("ERROR:  Unable to return to the original starting page, one of the back buttons is missing or non-functional.  Doing a refresh of the page");
 			
 			portletDriver.navigate().refresh();
+			
+			backButtonStack.clear();
 		}
 
 	}
@@ -230,7 +234,7 @@ public final class CEPUploadTester extends GenericCEPTester {
 	}
 	
 	private boolean checkStep4Success() {
-		boolean success = false;
+		boolean success = true;
 		
 		portletDriver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 		
@@ -239,21 +243,50 @@ public final class CEPUploadTester extends GenericCEPTester {
 			// now see if the upload button bar and buttons are present
 			if(!(portletDriver.findElements(By.xpath("//div[@class='fileupload-buttonbar ui-widget-header ui-corner-top']")).isEmpty())) {
 				//check the upload buttons first
-				if(!(portletDriver.findElements(By.xpath("//button[@class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left cancel']")).isEmpty()) && !(portletDriver.findElements(By.id("A2724:j_idt82:j_idt105_input")).isEmpty()) && !(portletDriver.findElements(By.xpath("//button[@class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left cancel']")).isEmpty())) {
-					portletLogMessages.add("The verify citations page has successfully loaded");
+				if(!(portletDriver.findElements(By.id("A2724:j_idt82:j_idt106_input")).isEmpty()) && !(portletDriver.findElements(By.xpath("//button[@class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left start']")).isEmpty()) && !(portletDriver.findElements(By.xpath("//button[@class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left cancel']")).isEmpty())) {
+					portletLogMessages.add("The upload panel buttons have loaded");
 					
-					// now check for the back and next buttons
-					if(!(portletDriver.findElements(By.id("A2724:j_idt82:j_idt107")).isEmpty()) && !(portletDriver.findElements(By.id("A2724:j_idt82:j_idt112")).isEmpty())) {
-						success = true;
-						backButtonStack.push("A2724:j_idt82:j_idt107");
-					}
 				}
 				else {
-					portletLogMessages.add("ERROR:  One or more upload bars are missing");
+					portletLogMessages.add("ERROR:  One or more upload buttons are missing");
+					success = false;
 				}
 			}
 			else {
 				portletLogMessages.add("ERROR:  Upload bar is missing");
+				success = false;
+			}
+			// now check for the back and next buttons
+			if(!(portletDriver.findElements(By.id("A2724:j_idt82:j_idt108")).isEmpty()) && !(portletDriver.findElements(By.id("A2724:j_idt82:j_idt112")).isEmpty())) {
+				
+				if(this.useBackButtons) {
+					// use the back button
+					backButtonStack.push("A2724:j_idt82:j_idt108");
+				}
+				else {
+					// use the return to start button
+					backButtonStack.clear();
+					backButtonStack.push("A2724:j_idt82:j_idt114");
+				}
+				
+				// Toggling between the back button and return to start button has been disabled for the time being until the bug with the
+				// return to start button is finished
+				
+				//this.useBackButtons = !(this.useBackButtons);
+			}
+			else {
+				portletLogMessages.add("ERROR:  One of the buttons needed to return back to the original page is missing");
+				success = false;
+			}
+			
+			// check for the Save Progress button and click it
+			if(!(portletDriver.findElements(By.id("A2724:j_idt82:j_idt112")).isEmpty())) {
+				portletDriver.findElement(By.id("A2724:j_idt82:j_idt112")).click();
+				portletDriver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+			}
+			else {
+				portletLogMessages.add("ERROR: The Save Progress button is missing");
+				success = false;
 			}
 			
 		}

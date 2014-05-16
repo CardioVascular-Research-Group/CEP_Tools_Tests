@@ -18,6 +18,7 @@ public class CEPTestProperties {
 	
 	private String uploadpath;
 	private String searchpath;
+	private String publicationspath;
 	
 	private CEPTestProperties() {
 	       
@@ -51,6 +52,7 @@ public class CEPTestProperties {
 			
 			uploadpath = props.getProperty("uploadpath", "confignotfound");
 			searchpath = props.getProperty("searchpath", "confignotfound");
+			publicationspath = props.getProperty("publicationspath", "confignotfound");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -91,5 +93,9 @@ public class CEPTestProperties {
 	
 	public String getSearchpath() {
 		return searchpath;
+	}
+	
+	public String getPublicationsPath() {
+		return publicationspath;
 	}
 }

@@ -207,20 +207,26 @@ public abstract class GenericCEPTester extends BaseFunctions {
 	}
 	
 	protected boolean checkStep2Success(String step2NextButtonID) {
+		return this.checkStep2Success(step2NextButtonID, true);
+	}
+	
+	protected boolean checkStep2Success(String step2NextButtonID, boolean checkNoSelection) {
 		boolean success = true;
 		
 		// first, if there are no results or nothing has been highlighted, check the next button and make sure it does not proceed to the next page
 		try {
-			portletDriver.findElement(By.id(step2NextButtonID)).click();
-			portletDriver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-			
-			// unfortunately it appears that the inline style is the only thing these error messages have in common across the portlets
-			if(!(portletDriver.findElements(By.xpath("//span[@style='color:red']")).isEmpty())) { 
-				portletLogMessages.add("There were no search results, and clicking Next produced the correct message");
-			}
-			else {
-				portletLogMessages.add("ERROR:  There were no search results selected, but clicking Next did not produce a message");
-				success = false;
+			if(checkNoSelection) {
+				portletDriver.findElement(By.id(step2NextButtonID)).click();
+				portletDriver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+				
+				// unfortunately it appears that the inline style is the only thing these error messages have in common across the portlets
+				if(!(portletDriver.findElements(By.xpath("//span[@style='color:red']")).isEmpty())) { 
+					portletLogMessages.add("There were no search results, and clicking Next produced the correct message");
+				}
+				else {
+					portletLogMessages.add("ERROR:  There were no search results selected, but clicking Next did not produce a message");
+					success = false;
+				}
 			}
 			
 			// select an entry and then try again, it should proceed this time				

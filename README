@@ -1,6 +1,6 @@
 Instructions:
 
-Currently, Firefox 28, Internet Explorer 9, and Chrome 34.0.1846.116 m have been tested.  Future versions of these tests will include Opera and Safari.
+Currently, Firefox 28, Internet Explorer 9, Safari 5.1.2 and Chrome 34.0.1846.131 m have been tested.  Future versions of these tests will include Opera and Safari.
 
 If using Firefox or Safari, enter the appropriate text in the "browser" field of the global_properties.config file and proceed to the Running CVRG_Tests stage.
 
